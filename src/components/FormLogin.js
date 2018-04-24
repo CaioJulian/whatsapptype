@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, Text, TextInput, Button, TouchableHighlight } from 'react-native';
+import { View, Text, TextInput, Button, TouchableHighlight, ActivityIndicator } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
 import { modificaEmail, modificaSenha, autenticarUsuario } from '../actions/AutenticacaoActions';
@@ -10,6 +10,21 @@ class formLogin extends Component {
         const { email, senha } = this.props;
 
         this.props.autenticarUsuario({ email, senha});
+    }
+    
+    renderBtnAcessar(){
+        if(this.props.loading_login){
+            return(
+                <ActivityIndicator size="large" />
+            )
+        }
+        return(
+            <Button
+                title="Acessar"
+                color='#115E54'
+                onPress={() => this._autenticarUsuario()}
+            />
+        )
     }
 
     render() {
@@ -33,16 +48,15 @@ class formLogin extends Component {
                         placeholder='Senha'
                         onChangeText={texto => this.props.modificaSenha(texto)}
                     />
+                    <Text style={{ color:'#ff0000', fontSize:18 }} > 
+                        {this.props.erroLogin}
+                    </Text>
                     <TouchableHighlight onPress={() => Actions.formCadastro()} >
-                        <Text style={{ fontSize: 16 }} >Ainda não tem cadastro? Cadastre-se</Text>
+                        <Text style={{ fontSize: 18 }} >Ainda não tem cadastro? Cadastre-se</Text>
                     </TouchableHighlight>
                 </View>
                 <View style={{ flex: 2 }}>
-                    <Button
-                        title="Acessar"
-                        color='#115E54'
-                        onPress={() => this._autenticarUsuario()}
-                    />
+                    {this.renderBtnAcessar()}
                 </View>
             </View>
         );
@@ -52,7 +66,9 @@ class formLogin extends Component {
 const mapStateToProps = state => (
     {
         email: state.AutenticacaoReducer.email,
-        senha: state.AutenticacaoReducer.senha
+        senha: state.AutenticacaoReducer.senha,
+        erroLogin: state.AutenticacaoReducer.erroLogin,
+        loading_login: state.AutenticacaoReducer.loading_login
     }
 )
 
