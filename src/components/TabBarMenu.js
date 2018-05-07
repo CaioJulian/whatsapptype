@@ -3,7 +3,7 @@ import { View, Text, StatusBar, Image, TouchableHighlight } from 'react-native';
 import { TabBar } from 'react-native-tab-view';
 import { Actions } from 'react-native-router-flux';
 import { connect } from 'react-redux';
-import { habilitaInclusaoContato } from '../actions/AppActions';
+import { habilitaInclusaoContato, desconectaLogin } from '../actions/AppActions';
 
 const TabBarMenu = props => (
     <View style={{ backgroundColor: "#115E54", elevation: 4, marginBottom: 6 }} >
@@ -25,7 +25,12 @@ const TabBarMenu = props => (
                     </TouchableHighlight>
                 </View>
                 <View style={{ justifyContent: 'center' }} >
-                    <Text style={{fontSize: 18, color:"#fff"}} >Sair</Text>
+                    <TouchableHighlight 
+                        onPress={() => {Actions.formLogin(); props.desconectaLogin(); }}
+                        underlayColor="#114D44"
+                    >
+                        <Text style={{fontSize: 18, color:"#fff"}} >Sair</Text>
+                    </TouchableHighlight>
                 </View>
             </View>
         </View>
@@ -34,4 +39,4 @@ const TabBarMenu = props => (
     </View>
 );
 
-export default connect(null, { habilitaInclusaoContato })(TabBarMenu);
+export default connect(null, { habilitaInclusaoContato, desconectaLogin })(TabBarMenu);

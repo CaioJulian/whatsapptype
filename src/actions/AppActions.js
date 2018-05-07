@@ -6,7 +6,10 @@ import {
     MODIFICA_ADICIONA_CONTATO_EMAIL, 
     ADICIONA_CONTATO_ERRO,
     ADICIONA_CONTATO_SUCESSO,
-    LISTA_CONTATO_USUARIO 
+    DESCONECTA_LOGIN,
+    LISTA_CONTATO_USUARIO, 
+    MODIFICA_EMAIL,
+    MODIFICA_MENSAGEM
 } from './types';
 
 export const modificaAdicionaContatoEmail = texto => {
@@ -70,6 +73,12 @@ export const habilitaInclusaoContato = () => (
     }
 )
 
+export const desconectaLogin = () => (
+    {
+        type: DESCONECTA_LOGIN
+    }
+)
+
 export const contatosUsuarioFetch = () => {
     const { currentUser } = firebase.auth();
 
@@ -81,4 +90,50 @@ export const contatosUsuarioFetch = () => {
                 dispatch({ type: LISTA_CONTATO_USUARIO, payload: snapshot.val() })
             })
     }
+}
+
+export const modificaMensagem = texto => {
+    return ({
+        type: MODIFICA_MENSAGEM,
+        payload: texto
+    })
+}
+
+export const enviarMensagem = (mensagem, contatoNome, contatoEmail) => {
+    //dados do usuario (email)
+    const { currentUser } = firebase.auth();
+    const usuarioEmail = currentUser.email;
+
+
+    return dispatch => {
+
+        //conversão para base 64
+        const usuarioEmail64 = b64.encode(usuarioEmail)
+        const contatoEmail64 = b64.encode(contatoEmail)
+
+        firebase.database().ref(`/mensagens/${usuarioEmail64}/${contatoEmail64}`)
+            .push({ mensagem, tipo: 'e' })
+            .then(() => {
+                firebase.database().ref(`/mensagens/${contatoEmail64}/${usuarioEmail64}`)
+                    .push({ mensagem, tipo: 'r' })
+                    .then(() => dispatch({ type: 'teste' }))
+            }) 
+            .then(() => { //armazenar os cabeçalho de conversa do usuário autenticado
+                firebase.database().ref(`/usuario_conversas/${usuarioEmail64}/${contatoEmail64}`)
+                    .set({ nome: contatoNome, email: contatoEmail })
+            })
+            .then(() => { //armazenar o cabeçalho de conversa do contato
+                
+                firebase.database().ref(`/contatos/${usuarioEmail64}`)
+                    .once("value")
+                    .then(snapshot => {
+
+                        const dadosUsuario = _.first(_.values(snapshot.val()))
+
+                        firebase.database().ref(`/usuario_conversas/${contatoEmail64}/${usuarioEmail64}`)
+                            .set({ nome: dadosUsuario.nome, email: usuarioEmail })
+                    })
+            })  
+    }
+    
 }

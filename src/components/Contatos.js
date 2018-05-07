@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { View, Text, ListView } from 'react-native';
+import { View, Text, ListView, TouchableHighlight } from 'react-native';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { Actions } from 'react-native-router-flux';
 import { contatosUsuarioFetch } from '../actions/AppActions';
 
 class Contatos extends Component {
@@ -19,6 +20,19 @@ class Contatos extends Component {
         const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 })
 
         this.fonteDados = ds.cloneWithRows(contatos)
+    };
+
+    renderRow(contato) {
+        return(
+            <TouchableHighlight
+                onPress = { () => Actions.conversa({ title: contato.nome, contatoNome: contato.nome, contatoEmail: contato.email}) }
+            >
+                <View style={{ flex: 1, padding: 20, borderBottomWidth: 1, borderColor: "#CCC" }} >
+                    <Text style={{ fontSize: 25 }} >{contato.nome}</Text>
+                    <Text style={{ fontSize: 18 }} >{contato.email}</Text>
+                </View>
+            </TouchableHighlight>
+        )
     }
 
     render() {
@@ -26,13 +40,7 @@ class Contatos extends Component {
             <ListView
                 enableEmptySections     
                 dataSource={this.fonteDados}
-                renderRow={data => (
-                        <View style={{flex: 1, padding: 20, borderBottomWidth: 1, borderColor: "#CCC" }} >
-                            <Text style={{ fontSize: 25}} >{data.nome}</Text>
-                            <Text style={{ fontSize: 18}} >{data.email}</Text>
-                        </View>
-                    )
-                }
+                renderRow={this.renderRow}
 
             />
         )
