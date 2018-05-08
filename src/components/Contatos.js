@@ -26,6 +26,7 @@ class Contatos extends Component {
         return(
             <TouchableHighlight
                 onPress = { () => Actions.conversa({ title: contato.nome, contatoNome: contato.nome, contatoEmail: contato.email}) }
+                underlayColor= '#e0e0e0'
             >
                 <View style={{ flex: 1, padding: 20, borderBottomWidth: 1, borderColor: "#CCC" }} >
                     <Text style={{ fontSize: 25 }} >{contato.nome}</Text>

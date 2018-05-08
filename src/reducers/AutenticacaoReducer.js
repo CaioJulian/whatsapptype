@@ -38,9 +38,9 @@ export default (state = INITIAL_STATE, action) => {
         case LOGIN_USUARIO_SUCESSO:
             return { ...state, loading_login: false }
         case LOGIN_EM_ANDAMENTO:
-            return { ...state, loading_login: true }
+            return { ...state, erroLogin: '', loading_login: true }
         case CADASTRO_EM_ANDAMENTO:
-            return { ...state, loading_cadastro: true }
+            return { ...state, erroCadastro: '', loading_cadastro: true }
         case DESCONECTA_LOGIN:
             return { ...state, senha: ''}
         default:
